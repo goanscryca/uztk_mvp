@@ -4,8 +4,12 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView
-from uztk.app.models import CameraToTourniquetLock, TourniquetLock
+from uztk.app.models import (
+    Camera, 
+    CameraToTourniquetLock, 
+    TourniquetLock)
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
 User = get_user_model()
 
@@ -90,3 +94,32 @@ def lock_control(request, lock_id):
     lock.state = TourniquetLock.OPENED if lock.state == TourniquetLock.CLOSED else TourniquetLock.CLOSED
     lock.save()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+def camera_control(request, camera_id):
+    """Переключение камеры"""
+    tourniquets = CameraToTourniquetLock.objects.filter(cameras__in=[camera_id])
+    camera = Camera.objects.get(id__exact=camera_id)
+    locks = []
+    for lock in tourniquets:
+        locks.append({
+            "id": lock.tourniquet.id,
+            "uuid": lock.tourniquet.uuid,
+            "lock_type": lock.tourniquet.get_lock_type_display(),
+            "state": lock.tourniquet.get_state_display(),
+            "ip_address": lock.tourniquet.ip_address,
+            "location": lock.tourniquet.location
+            })
+    
+    context = {
+        "camera": {
+            "id": camera.id,
+            "uuid": camera.uuid,
+            "camtype": camera.get_camtype_display(),
+            "ip_address": camera.ip_address,
+            "location": camera.location
+        },
+        "locks": locks
+    }
+    
+    return render(request=request, template_name="pages/single_camera_view.html", context=context)
