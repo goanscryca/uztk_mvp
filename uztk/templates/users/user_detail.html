@@ -13,6 +13,7 @@
       {% if object.name %}
         <p>{{ object.name }}</p>
       {% endif %}
+
     </div>
   </div>
 
@@ -20,13 +21,74 @@
 <!-- Action buttons -->
 <div class="row">
 
-  <div class="col-sm-12">
+  {% comment %} <div class="col-sm-12">
     <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
     <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
     <!-- Your Stuff: Custom user template urls -->
-  </div>
+  </div> {% endcomment %}
 
 </div>
+
+
+  
+  {% for camera in cameras %}
+    {% if forloop.counter0|divisibleby:"4" %}
+      <div class="d-flex d-flex-row justify-content-md-between">
+    {% endif %}
+        <div class="p-2">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-primary">{{ camera.camtype }} камера #{{ camera.id }}</h6>
+              <h6 class="card-subtitle mb-2 text-muted">{{ camera.location }}</h6>
+              <small class="mt-1 mb-1" style="font-size: 12px;">{{ camera.uuid }}</small>
+              <p class="mt-1 mb-1" style="font-size: 12px;">IP: <i>{{ camera.ip_address }}</i></p>
+            </div>
+          </div>
+        </div>
+    {% if forloop.counter|divisibleby:"4" or forloop.last %}
+      </div>
+    {% endif %}
+  {% endfor %}
+  
+
+    {% for c in cameras %}
+    {% if forloop.counter0|divisibleby:"4" %}
+      <div class="d-flex d-flex-row justify-content-md-between">
+    {% endif %}
+        <img data-src="holder.js/200x200" class="img-thumbnail" alt="200x200" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_185fdffca34%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_185fdffca34%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2274.43181991577148%22%20y%3D%22104.36363620758057%22%3E200x200%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true" style="width: 200px; height: 200px;">
+    {% if forloop.counter|divisibleby:"4" or forloop.last %}
+      </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+
+  <div class="list-group mt-4">
+    {% for l in locks %}
+
+    {% if forloop.counter0|divisibleby:"4" %}
+      <div class="d-flex d-flex-row justify-content-md-left">
+    {% endif %}
+      
+        <div class="p-2">
+          <a href="{% url "users:lock-control" l.id %}">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="text-primary">{{ l.lock_type }} #{{ l.id }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">{{ l.location }}</h6>
+                <small class="mt-1 mb-1" style="font-size: 12px;">{{ l.uuid }}</small>
+                <p class="mt-1 mb-1" style="font-size: 12px;">IP: <i>{{ l.ip_address }}</i></p>
+                <small class="mt-1 mb-1" style="font-size: 12px;">{{ l.state }}</small>
+              </div>
+            </div>
+          </a>
+        </div>
+    {% if forloop.counter|divisibleby:"4" or forloop.last %}
+      </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
 <!-- End Action buttons -->
 {% endif %}
 

@@ -73,18 +73,16 @@ class Camera(models.Model):
     - created: дата создания
     - updated: дата обновления"""
     
-    WATCH = 1
-    RECOGNIZE = 2
-    CONTROL = 3
+    RECOGNIZE = 1
+    CONTROL = 2
     
     camera_types = [
-        (WATCH, "Следящая"),
         (RECOGNIZE, "Распознающая"),
         (CONTROL, "Управляющая")
     ]
     
     uuid = models.UUIDField(default=uuid.uuid4, db_index=True, editable=False, unique=True, verbose_name="UUID")
-    camtype = models.IntegerField(choices=camera_types, default=WATCH, verbose_name="Тип камеры (1-3)")
+    camtype = models.IntegerField(choices=camera_types, default=RECOGNIZE, verbose_name="Тип камеры")
     ip_address = models.CharField(max_length=32, verbose_name="IP адрес")
     location = models.ForeignKey(to=Location, db_index=True, on_delete=models.CASCADE, verbose_name="Расположение")
     
